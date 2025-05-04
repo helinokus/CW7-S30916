@@ -3,7 +3,12 @@ using Microsoft.Data.SqlClient;
 
 namespace CW7_S30916.Repositories;
 
-public class TripsRepository(IConfiguration config)
+public interface ITripsRepository
+{
+    Task<List<Trip>> GetTripsAsync();
+}
+
+public class TripsRepository(IConfiguration config) : ITripsRepository
 {
     public async Task<List<Trip>> GetTripsAsync()
     {
@@ -15,7 +20,6 @@ public class TripsRepository(IConfiguration config)
         
         await using var command = new SqlCommand(sql, connection);
         await connection.OpenAsync();
-        await command.Connection.OpenAsync();
         await using var readerAsync =  await command.ExecuteReaderAsync();
 
         while (await readerAsync.ReadAsync())
