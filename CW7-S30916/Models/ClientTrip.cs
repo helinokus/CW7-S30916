@@ -9,8 +9,8 @@ public class ClientTrip
     [Required]
     public int IdTrip { get; set; }
     [Required]
-    public DateTime RegisteredAt { get; set; }
-    public DateTime? PaymentDate { get; set; }
+    public int RegisteredAt { get; set; }
+    public int PaymentDate { get; set; }
     
     public Trip Trip { get; set; }
 }

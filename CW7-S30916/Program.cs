@@ -5,9 +5,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddScoped<ITripsRepository, TripsRepository>();
 builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
+builder.Services.AddScoped<ITripsRepository, TripsRepository>();
 builder.Services.AddScoped<IClientTripRepository, ClientTripRepository>();
+
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<ITripsService, TripsService>();
+builder.Services.AddScoped<IClientTripService, ClientTripService>();
 
 
 

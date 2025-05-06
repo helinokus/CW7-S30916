@@ -1,5 +1,7 @@
+using CW7_S30916.Dtos;
 using CW7_S30916.Models;
 using Microsoft.Data.SqlClient;
+using CreateClientDto = CW7_S30916.Models.CreateClientDto;
 
 namespace CW7_S30916.Repositories;
 
@@ -7,7 +9,7 @@ public interface IClientsRepository
 {
     Task<List<Client>> GetClientsAsync();
     Task<bool> ClientExistsAsync(int idClient);
-    Task<List<ClientTrip>> GetClientTripsAsync(int idClient);
+    Task<List<GetClientTripDto>> GetClientTripsAsync(int idClient);
     Task<int> CreateClientAsync(CreateClientDto client);
     Task<bool> EmailExistsAsync(string email);
     Task<bool> PeselExistsAsync(string pesel);
@@ -46,19 +48,18 @@ public class ClientsRepository(IConfiguration config) : IClientsRepository
         
         var conString = config.GetConnectionString("Default");
         await using var connection = new SqlConnection(conString);
-        var sql = @"select 1 from Client where IdClient = @IdClient";
-        
+        var sql = "select 1 from Client where IdClient = @IdClient";
         
         await using var command = new SqlCommand(sql, connection);
         command.Parameters.AddWithValue("@IdClient", idClient);
         
         await connection.OpenAsync();
-        return await command.ExecuteReaderAsync() != null;
+        return await command.ExecuteScalarAsync() != null;
     }
 
-    public async Task<List<ClientTrip>> GetClientTripsAsync(int idClient)
+    public async Task<List<GetClientTripDto>> GetClientTripsAsync(int idClient)
     {
-        var clientTrips = new List<ClientTrip>();
+        var clientTrips = new List<GetClientTripDto>();
         
         var conString = config.GetConnectionString("Default");
         await using var connection = new SqlConnection(conString);
@@ -79,19 +80,16 @@ public class ClientsRepository(IConfiguration config) : IClientsRepository
 
         while (await reader.ReadAsync())
         {
-            clientTrips.Add(new ClientTrip()
+            clientTrips.Add(new GetClientTripDto()
             {
-                Trip = new Trip()
-                {
-                    IdTrip = reader.GetInt32(0),
-                    Name = reader.GetString(1),
-                    Description = reader.IsDBNull(2) ? null : reader.GetString(2),
-                    DateFrom = reader.GetDateTime(3),
-                    DateTo = reader.GetDateTime(4),
-                    MaxPeople = reader.GetInt32(5)
-                },
-                RegisteredAt = reader.GetDateTime(6),
-                PaymentDate = reader.IsDBNull(7) ? null : reader.GetDateTime(7)
+                IdTrip = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Description = reader.GetString(2),
+                DateFrom = reader.GetDateTime(3),
+                DateTo = reader.GetDateTime(4),
+                MaxPeople = reader.GetInt32(5),
+                RegisteredAt = reader.GetInt32(6),
+                PaymentDate = reader.IsDBNull(7) ? null : reader.GetInt32(7)
             });
         }
         
@@ -115,7 +113,6 @@ public class ClientsRepository(IConfiguration config) : IClientsRepository
         await connection.OpenAsync();
         
         return Convert.ToInt32(await command.ExecuteScalarAsync());
-    
     }
 
     public async Task<bool> EmailExistsAsync(string email)

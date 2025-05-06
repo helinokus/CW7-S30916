@@ -1,13 +1,15 @@
 using System.Text.RegularExpressions;
+using CW7_S30916.Dtos;
 using CW7_S30916.Exceptions;
 using CW7_S30916.Models;
 using CW7_S30916.Repositories;
+using CreateClientDto = CW7_S30916.Models.CreateClientDto;
 
 namespace CW7_S30916.Services;
 
 public interface IClientService
 {
-    Task<List<ClientTrip>> GetClientTripsAsync(int idClient);
+    Task<List<GetClientTripDto>> GetClientTripsAsync(int idClient);
     Task<int> CreateClientAsync(CreateClientDto client);
 }
 
@@ -20,8 +22,10 @@ public class ClientService : IClientService
         _clientRepository = clientRepository;
     }
 
-    public async Task<List<ClientTrip>> GetClientTripsAsync(int idClient)
+    public async Task<List<GetClientTripDto>> GetClientTripsAsync(int idClient)
     {
+        Console.WriteLine(await _clientRepository.ClientExistsAsync(idClient));
+
         if (idClient <= 0)
         {
             throw new ConflictException("Client Id is invalid");
@@ -48,7 +52,7 @@ public class ClientService : IClientService
             throw new ConflictException("First name or Last name cannot contain digits");
         }
 
-        if (!client.Telephone.All(char.IsDigit) || client.Telephone.Length != 9)
+        if (!client.Telephone.All(char.IsDigit) || client.Telephone.Length != 12 || !client.Telephone.StartsWith("+"))
         {
             throw new ConflictException("Wrong telephone number");
         }
