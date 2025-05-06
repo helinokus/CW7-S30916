@@ -1,19 +1,20 @@
 using CW7_S30916.Models;
 using CW7_S30916.Repositories;
+using CW7_S30916.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CW7_S30916.Controllers;
 
 
 [ApiController]
-[Route("[controller]")]
+[Route("/api/[controller]")]
 public class TripsController : ControllerBase
 {
-    private readonly ITripsRepository _tripsRepository;
+    private readonly ITripsService _tripsService;
 
-    public TripsController(ITripsRepository tripsRepository)
+    public TripsController(ITripsService tripsService)
     {
-        _tripsRepository = tripsRepository;
+        _tripsService = tripsService;
     }
 
     [HttpGet]
@@ -21,7 +22,7 @@ public class TripsController : ControllerBase
     {
         try
         {
-            var trips = await _tripsRepository.GetTripsAsync();
+            var trips = await _tripsService.GetTripsAsync();
             return Ok(trips);
         }
         catch (Exception ex)

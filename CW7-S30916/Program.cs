@@ -1,10 +1,13 @@
 using CW7_S30916.Repositories;
+using CW7_S30916.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITripsRepository, TripsRepository>();
+builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
+builder.Services.AddScoped<IClientTripRepository, ClientTripRepository>();
 
 
 
