@@ -1,7 +1,7 @@
 using CW7_S30916.Dtos;
 using CW7_S30916.Models;
 using Microsoft.Data.SqlClient;
-using CreateClientDto = CW7_S30916.Models.CreateClientDto;
+using CreateClientDto = CW7_S30916.Dtos.CreateClientDto;
 
 namespace CW7_S30916.Repositories;
 
