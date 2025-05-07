@@ -25,6 +25,7 @@ public class ClientTripService : IClientTripService
 
     public async Task CreateClientTripAsync(int clientId, int tripId)
     {
+
         if (!await _clientsRepository.ClientExistsAsync(clientId))
         {
             throw new NotFoundException($"Client with id {clientId} does not exist");
@@ -35,7 +36,7 @@ public class ClientTripService : IClientTripService
             throw new NotFoundException($"Trip with id {tripId} does not exist");
         }
 
-        if (!(await _clientTripRepository.GetPeopleOnTripAsync(clientId, tripId) < await _tripsRepository.GetMaxPeopleAsync(tripId)))
+        if (!(await _clientTripRepository.GetPeopleOnTripAsync(tripId) < await _tripsRepository.GetMaxPeopleAsync(tripId)))
         {
             throw new ConflictException("Trips already has max amount of people");
         }
@@ -62,7 +63,7 @@ public class ClientTripService : IClientTripService
 
         if (!await _clientTripRepository.IsRegisteredAsync(clientId, tripId))
         {
-            throw new ConflictException("This client doesn't register this trip");
+            throw new ConflictException("This client doesn't register on this trip");
         }
         
         await _clientTripRepository.DeleteClientTripAsync(clientId, tripId);

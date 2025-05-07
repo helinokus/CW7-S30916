@@ -1,3 +1,4 @@
+using CW7_S30916.Exceptions;
 using CW7_S30916.Models;
 using CW7_S30916.Repositories;
 using CW7_S30916.Services;
@@ -16,7 +17,15 @@ public class TripsController : ControllerBase
     {
         _tripsService = tripsService;
     }
-
+    /*Wyszukuj wszystkie dostępne wycieczki z wymagającą informacją
+     var sql = @"SELECT 
+        t.IdTrip, t.Name, t.Description, 
+        t.DateFrom, t.DateTo, t.MaxPeople,
+        c.IdCountry, c.Name as CountryName
+        FROM Trip t
+        LEFT JOIN Country_Trip ct ON t.IdTrip = ct.IdTrip
+        LEFT JOIN Country c ON ct.IdCountry = c.IdCountry"*/
+    
     [HttpGet]
     public async Task<IActionResult> GetAllTrips()
     {
@@ -25,9 +34,9 @@ public class TripsController : ControllerBase
             var trips = await _tripsService.GetTripsAsync();
             return Ok(trips);
         }
-        catch (Exception ex)
+        catch (NotFoundException ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            return NotFound(ex.Message);
         }
     }
 }

@@ -19,6 +19,15 @@ public class ClientsController : ControllerBase
         _clientTripService = clientTripService;
     }
 
+    /*Wyszukaj wszystkie wycieczki powiązane z konkretnym klientem 
+    var sql = @"SELECT 
+                t.IdTrip, t.Name, t.Description, 
+                t.DateFrom, t.DateTo, t.MaxPeople,
+                ct.RegisteredAt, ct.PaymentDate
+            FROM Client_Trip ct
+            JOIN Trip t ON ct.IdTrip = t.IdTrip
+            WHERE ct.IdClient = @IdClient"*/
+    
     [HttpGet("{idClient}/trips")]
     public async Task<IActionResult> GetClientTrips(int idClient)
     {
@@ -37,6 +46,10 @@ public class ClientsController : ControllerBase
             return Conflict(e.Message);
         }
     }
+    /*Utwórz nowego klienta 
+        var sql = "insert into Client (FirstName, LastName, Email, Telephone, Pesel)
+        values (@FirstName, @LastName, @Email, @Telephone, @Pesel); 
+        select scope_identity();";*/
 
     [HttpPost]
     public async Task<IActionResult> CreateClient([FromBody] CreateClientDto clientDto)
@@ -56,12 +69,16 @@ public class ClientsController : ControllerBase
         }    
     }
 
+    /*Zarejestruj klienta na konkretną wycieczkę
+        var sql = @"insert into Client_Trip (IdClient, IdTrip, RegisteredAt)
+         values (@ClientId, @TripId, @RegisteredAt)";*/
+    
     [HttpPut("{id}/trips/{tripId}")]
-    public async Task<IActionResult> AddClientToTrip(int idClient, int tripId)
+    public async Task<IActionResult> AddClientToTrip(int id, int tripId)
     {
         try
         {
-            await _clientTripService.CreateClientTripAsync(idClient, tripId);
+            await _clientTripService.CreateClientTripAsync(id, tripId);
             return Ok("Added client to trip");
         }
         catch (NotFoundException ex)
@@ -74,12 +91,18 @@ public class ClientsController : ControllerBase
         }
     }
 
+    /*Usuń rejestrację klienta z wycieczki 
+        var sql = @"delete 
+        from Client_Trip 
+        where IdClient = @ClientId and IdTrip = @TripId;";*/
+
+    
     [HttpDelete("{id}/trips/{tripId}")]
-    public async Task<IActionResult> RemoveClientFromTrip(int idClient, int tripId)
+    public async Task<IActionResult> RemoveClientFromTrip(int id, int tripId)
     {
         try
         {
-            await _clientTripService.DeleteClientTripAsync(idClient, tripId);
+            await _clientTripService.DeleteClientTripAsync(id, tripId);
             return Ok("Removed client from trip");
         }
         catch (NotFoundException e)

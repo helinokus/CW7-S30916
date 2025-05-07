@@ -24,7 +24,6 @@ public class ClientService : IClientService
 
     public async Task<List<GetClientTripDto>> GetClientTripsAsync(int idClient)
     {
-        Console.WriteLine(await _clientRepository.ClientExistsAsync(idClient));
 
         if (idClient <= 0)
         {
@@ -36,7 +35,14 @@ public class ClientService : IClientService
             throw new NotFoundException("Client does not exist");
         }
 
-        return await _clientRepository.GetClientTripsAsync(idClient);
+        var res = await _clientRepository.GetClientTripsAsync(idClient);
+
+        if (res.Count == 0)
+        {
+            throw new NotFoundException("This client does not has trips yet");
+        }
+
+        return res;
     }
 
     
@@ -52,7 +58,7 @@ public class ClientService : IClientService
             throw new ConflictException("First name or Last name cannot contain digits");
         }
 
-        if (!client.Telephone.All(char.IsDigit) || client.Telephone.Length != 12 || !client.Telephone.StartsWith("+"))
+        if (!client.Telephone.Substring(1).All(char.IsDigit) || client.Telephone.Length != 12 || !client.Telephone.StartsWith('+'))
         {
             throw new ConflictException("Wrong telephone number");
         }

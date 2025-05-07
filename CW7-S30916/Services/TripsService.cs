@@ -1,4 +1,5 @@
 using CW7_S30916.Dtos;
+using CW7_S30916.Exceptions;
 using CW7_S30916.Models;
 using CW7_S30916.Repositories;
 
@@ -20,7 +21,13 @@ public class TripsService : ITripsService
     
     public async Task<List<GetTripsInfoDto>> GetTripsAsync()
     {
-        return await _tripsRepository.GetTripsAsync();
+        var res = await _tripsRepository.GetTripsAsync();
+        if (res.Count == 0)
+        {
+            throw new NotFoundException("Trips not found");
+        }
+        
+        return res;
     }
     
 }
